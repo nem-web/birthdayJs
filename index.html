@@ -16,6 +16,11 @@
         .birthday-list {
             margin-top: 20px;
         }
+        .birthday-item {
+            margin: 5px 0;
+            font-weight: bold;
+            color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -25,8 +30,12 @@
         <input type="date" id="dob" required>
         <button type="submit">Add</button>
     </form>
+    <div>
+        <button id="download-btn">Download Birthdays</button>
+        <input type="file" id="upload-btn" accept=".json">
+    </div>
     <div class="birthday-list" id="birthday-list">
-        <h3>Upcoming Birthdays</h3>
+        <h3>Today's Birthdays</h3>
     </div>
     <script src="app.js"></script>
 </body>
