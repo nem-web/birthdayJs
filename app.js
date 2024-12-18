@@ -1,20 +1,19 @@
 // DOM Elements
 const form = document.getElementById('birthday-form');
 const birthdayList = document.getElementById('birthday-list');
+const downloadBtn = document.getElementById('download-btn');
+const uploadBtn = document.getElementById('upload-btn');
 
-// Load saved birthdays from localStorage or initialize an empty array
-let birthdays = JSON.parse(localStorage.getItem('birthdays')) || [];
+// Array to store birthdays
+let birthdays = [];
 
 // Render today's birthdays
 const renderBirthdays = () => {
     birthdayList.innerHTML = '<h3>Today\'s Birthdays</h3>';
     const today = new Date().toISOString().slice(5); // Get MM-DD format for today
 
-    console.log("Today's Date (MM-DD):", today); // Debugging
-
     let hasBirthdays = false;
     birthdays.forEach(({ name, dob }) => {
-        console.log(`Checking ${name}'s birthday (${dob})`); // Debugging
         if (dob.slice(5) === today) { // Compare only MM-DD
             hasBirthdays = true;
             const div = document.createElement('div');
@@ -38,16 +37,41 @@ form.addEventListener('submit', (e) => {
     const name = document.getElementById('name').value;
     const dob = document.getElementById('dob').value;
 
-    console.log('Form Submitted'); // Debugging
-    console.log('Name:', name, 'DOB:', dob); // Debugging
-
-    // Add the new birthday to the array and save it to localStorage
     birthdays.push({ name, dob });
-    localStorage.setItem('birthdays', JSON.stringify(birthdays));
-
-    // Reset form and re-render birthdays
     form.reset();
     renderBirthdays();
+});
+
+// Download birthdays as a JSON file
+downloadBtn.addEventListener('click', () => {
+    const dataStr = JSON.stringify(birthdays, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'birthdays.json';
+    a.click();
+
+    URL.revokeObjectURL(url);
+});
+
+// Upload birthdays from a JSON file
+uploadBtn.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                birthdays = JSON.parse(e.target.result);
+                renderBirthdays();
+                alert('Birthdays uploaded successfully!');
+            } catch (err) {
+                alert('Invalid file format.');
+            }
+        };
+        reader.readAsText(file);
+    }
 });
 
 // Initial rendering of birthdays
