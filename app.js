@@ -100,4 +100,4 @@ requestNotificationPermission();
 renderBirthdays();
 
 // Check birthdays every 24 hours (interval in milliseconds)
-setInterval(renderBirthdays, 60 * 1000);
+setInterval(renderBirthdays, 5*1000);
