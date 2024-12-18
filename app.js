@@ -1,20 +1,32 @@
 // DOM Elements
 const form = document.getElementById('birthday-form');
 const birthdayList = document.getElementById('birthday-list');
-const downloadBtn = document.getElementById('download-btn');
-const uploadBtn = document.getElementById('upload-btn');
 
 // Array to store birthdays
 let birthdays = [];
 
-// Render today's birthdays
+// Function to render today's birthdays
 const renderBirthdays = () => {
+    // Clear previous list
     birthdayList.innerHTML = '<h3>Today\'s Birthdays</h3>';
-    const today = new Date().toISOString().slice(5); // Get MM-DD format for today
 
+    // Get today's date in MM-DD format
+    const today = new Date();
+    const todayMMDD = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    console.log("Today's Date (MM-DD):", todayMMDD); // Debugging
+
+    // Check if there are any birthdays today
     let hasBirthdays = false;
+
     birthdays.forEach(({ name, dob }) => {
-        if (dob.slice(5) === today) { // Compare only MM-DD
+        // Extract MM-DD from dob
+        const dobMMDD = dob.slice(5); // Get MM-DD from YYYY-MM-DD
+
+        console.log(`Checking ${name}'s birthday (${dobMMDD}) against today (${todayMMDD})`); // Debugging
+
+        // Compare MM-DD
+        if (dobMMDD === todayMMDD) {
             hasBirthdays = true;
             const div = document.createElement('div');
             div.className = 'birthday-item';
@@ -23,10 +35,11 @@ const renderBirthdays = () => {
         }
     });
 
+    // If no birthdays, show a message
     if (!hasBirthdays) {
         const noBirthdayMessage = document.createElement('div');
         noBirthdayMessage.textContent = "No birthdays today.";
-        noBirthdayMessage.style.color = "#FF5722";
+        noBirthdayMessage.className = 'no-birthdays';
         birthdayList.appendChild(noBirthdayMessage);
     }
 };
@@ -34,43 +47,19 @@ const renderBirthdays = () => {
 // Add a new birthday
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
+    const name = document.getElementById('name').value.trim();
     const dob = document.getElementById('dob').value;
 
-    birthdays.push({ name, dob });
-    form.reset();
-    renderBirthdays();
-});
+    console.log('Form Submitted'); // Debugging
+    console.log('Name:', name, 'DOB:', dob); // Debugging
 
-// Download birthdays as a JSON file
-downloadBtn.addEventListener('click', () => {
-    const dataStr = JSON.stringify(birthdays, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'birthdays.json';
-    a.click();
-
-    URL.revokeObjectURL(url);
-});
-
-// Upload birthdays from a JSON file
-uploadBtn.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                birthdays = JSON.parse(e.target.result);
-                renderBirthdays();
-                alert('Birthdays uploaded successfully!');
-            } catch (err) {
-                alert('Invalid file format.');
-            }
-        };
-        reader.readAsText(file);
+    if (name && dob) {
+        birthdays.push({ name, dob });
+        console.log('Updated Birthdays List:', birthdays); // Debugging
+        form.reset();
+        renderBirthdays();
+    } else {
+        alert('Please fill in all fields!');
     }
 });
 
