@@ -5,7 +5,32 @@ const birthdayList = document.getElementById('birthday-list');
 // Array to store birthdays
 let birthdays = [];
 
-// Function to render today's birthdays
+// Function to request notification permission
+const requestNotificationPermission = () => {
+    if (Notification.permission === "default") {
+        Notification.requestPermission()
+            .then((permission) => {
+                if (permission === "granted") {
+                    console.log("Notification permission granted.");
+                } else {
+                    console.log("Notification permission denied.");
+                }
+            })
+            .catch((err) => console.error("Notification request error:", err));
+    }
+};
+
+// Function to send a notification
+const sendNotification = (name) => {
+    if (Notification.permission === "granted") {
+        new Notification(`🎉 Happy Birthday, ${name}! 🎂`, {
+            body: `${name}'s birthday is today! 🎊`,
+            icon: "https://i.imgur.com/dQJ2oGQ.png", // Optional: Add your custom icon URL
+        });
+    }
+};
+
+// Function to render today's birthdays and notify
 const renderBirthdays = () => {
     // Clear previous list
     birthdayList.innerHTML = '<h3>Today\'s Birthdays</h3>';
@@ -28,10 +53,15 @@ const renderBirthdays = () => {
         // Compare MM-DD
         if (dobMMDD === todayMMDD) {
             hasBirthdays = true;
+
+            // Display in the birthday list
             const div = document.createElement('div');
             div.className = 'birthday-item';
             div.textContent = `${name} - 🎉 Happy Birthday! 🎂`;
             birthdayList.appendChild(div);
+
+            // Send notification
+            sendNotification(name);
         }
     });
 
@@ -63,5 +93,11 @@ form.addEventListener('submit', (e) => {
     }
 });
 
-// Initial rendering of birthdays
+// Request notification permission on page load
+requestNotificationPermission();
+
+// Check birthdays and render on page load
 renderBirthdays();
+
+// Check birthdays every 24 hours (interval in milliseconds)
+setInterval(renderBirthdays, 60 * 1000);
