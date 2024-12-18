@@ -21,19 +21,18 @@
             font-weight: bold;
             color: #4CAF50;
         }
+        .no-birthdays {
+            color: #FF5722;
+        }
     </style>
 </head>
 <body>
     <h1>Birthday Reminder</h1>
     <form id="birthday-form">
-        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="name" placeholder="Enter Name" required>
         <input type="date" id="dob" required>
-        <button type="submit">Add</button>
+        <button type="submit">Add Birthday</button>
     </form>
-    <div>
-        <button id="download-btn">Download Birthdays</button>
-        <input type="file" id="upload-btn" accept=".json">
-    </div>
     <div class="birthday-list" id="birthday-list">
         <h3>Today's Birthdays</h3>
     </div>
